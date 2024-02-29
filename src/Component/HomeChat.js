@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import {StyleSheet } from 'react-native';
 import Login from './HomeLoginZalo';
 
-export default function HomePage() {
+export default function HomeChat() {
   return (
     <View style={styles.container}>
       {/* <Navbar/>
@@ -12,6 +12,7 @@ export default function HomePage() {
       <Body/>
       </ScrollView> */}
       <Login/>
+      
     </View>
   );
 }

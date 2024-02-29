@@ -17,13 +17,16 @@ import Story from './src/Component/Story';
 import Chapter from './src/Component/Chapter'
 import Profile from './src/Component/Profile'
 import Body from './src/Component/Body'
+import Login from './src/Component/Login'
+import HomeChat from './src/Component/HomeChat';
+import Chat from './src/Component/Chat';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const BottomTab = () => {
   return(
       <Tab.Navigator 
-        initialRouteName="HomeStack"             
+        initialRouteName="History"             
       >
         <Tab.Screen name="History" component={History}   options={{
           headerShown: false,
@@ -33,7 +36,7 @@ const BottomTab = () => {
           ),
           tabBarStyle: { backgroundColor: 'black' },
         }}/>
-        <Tab.Screen name="HomeStack" component={Home}  options={{
+        <Tab.Screen name="HomeChat" component={HomeChat}  options={{
           headerShown: false,
           tabBarLabel: '',
           tabBarIcon: ({ color }) => (
@@ -79,6 +82,11 @@ function App() {
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title:''  }} />
       <Stack.Screen name="ResendEmail" component={ResendEmail} options={{ title:''  }}/>
+      <Stack.Screen name="Login" component={Login} options={{ title:'Đăng nhập'  }}/>
+      <Stack.Screen name="HomeLogin" component={Home} options={{ title:''  }}/>
+      <Stack.Screen name="Chat" component={Chat} options={{ title:''  }}/>
+      
+      
     </Stack.Navigator>
     </NavigationContainer>
   );
