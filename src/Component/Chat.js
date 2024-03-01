@@ -1,151 +1,169 @@
-import { AntDesign, Feather } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
-import { Alert, Dimensions, ScrollView } from 'react-native';
-import { Text } from 'react-native';
+import { AntDesign, Feather, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { TouchableOpacity } from 'react-native';
-import { Image } from 'react-native';
-import { StyleSheet, View} from 'react-native';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+const ChatScreen = ({ navigation, route }) => {
+  const { users } = route.params; // Retrieve the user ID from the navigation parameters
 
-
-export default function Chat({route}) {
-  const { chapter, item } = route.params;
-  const navigation= useNavigation();
-  const [data,setData]=useState({});
-  const[numChap,setNumchap]=useState(0);
-  const[countChap,setCountchap]=useState(0);
-  useEffect(() => {
-    infoChap();
-  }, []);
-  useEffect(() => {
-    handlePre();
-  }, [setNumchap]);
-  useEffect(() => {
-    handleNext();
-  }, [setNumchap]);
-  const infoChap = async () => {
-    try {
-        const response = await fetch('http://localhost:3000/Truyen');
-        const db = await response.json();
-        const story = db.find(
-            (story) => story.story_title === item.story_title
-          );
-          if (story) {
-            const count = story.chapter.map((chap)=>chap.chapter_number);
-            setCountchap(count.length)
-            const dataChap = story.chapter.filter((chap) => chap.chapter_number === chapter);
-            if(dataChap.length >0){
-                setData(dataChap[0])
-               }
-            
-          } else {
-            Alert.alert('Lỗi');
-          }
-      } catch (errors) {
-        console.error('Error fetching data:', errors);
+  const [messages, setMessages] = useState([]);
+  const [inputText, setInputText] = useState('');
+  const [inputTextEnable, setButtonEnabled] = useState(false)
+  const sendMessage = () => {
+    const newMessage = {
+      id: new Date().getTime(),
+      text: inputText,
+      createdAt: new Date(),
+      user: 'me',
+    };
+    setMessages([...messages, newMessage]);
+    setInputText('');
+    setButtonEnabled(false)
   };
-}
-  const handlePre = async ()=>{
-    if(data.chapter_number>1)
-       {
-        setNumchap(data.chapter_number-1)
-        const response = await fetch('http://localhost:3000/Truyen');
-        const db = await response.json();
-        const story = db.find(
-            (story) => story.story_title === item.story_title
-          );
-          if (story) {
-            const dataChap = story.chapter.filter((chap) => chap.chapter_number === numChap);
-            if(dataChap.length >0){
-                setData(dataChap[0])
-            }
-          } 
-    };      
+  const handleInputChange = (text) => {
+    setInputText(text)
+    setButtonEnabled(text.trim() !== '')
   }
-  const handleNext= async ()=>{
-    console.log(data.chapter_number,numChap)
-    if(data.chapter_number===countChap)
-        setNumchap(countChap)
-    else {
-        setNumchap(data.chapter_number+1)
-        const response = await fetch('http://localhost:3000/Truyen');
-        const db = await response.json();
-        const story = db.find(
-            (story) => story.story_title === item.story_title
-          );
-          if (story) {
-            const dataChap = story.chapter.filter((chap) => chap.chapter_number === numChap);
-            if(dataChap.length >0){
-                setData(dataChap[0])
-            }
-          } 
-    }; 
-}   
-  return (
-    <View style={styles.container}>
-     <View  style={styles.title}>
-        <View style={{alignItems: 'center',}}>
-          <TouchableOpacity style={styles.back}
-            onPress={()=> navigation.goBack('Story')} >
-                <Feather name="chevron-left" size={30} color="white"/>
-            </TouchableOpacity>
-        </View>
-        <Text style={{fontSize:10,color:'white'}}>Chap :{data.chapter_number} {data.title} </Text>
-      </View>
-      <ScrollView style={styles.content}>
-        <Text style={styles.txtContent}>
-            {data.content}
-        </Text>
-        <View style={styles.btn}>
-        <TouchableOpacity style={styles.pre} onPress={handlePre}>
-         <AntDesign name="arrowleft" size={30} color="white"/>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.pre} onPress={handleNext}>
-         <AntDesign name="arrowright" size={30} color="white"/>
-        </TouchableOpacity>
-        </View>  
-      </ScrollView>
+  const renderItem = ({ item }) => (
+    <View style={[styles.messageContainer, item.user === 'me' && styles.messageContainerMe]}>
+      <Text style={[styles.messageText, item.user === 'me' && styles.messageTextMe]}>{item.text}</Text>
     </View>
   );
-}
+
+  return (
+    <View style={styles.container}>
+        <View  style={styles.header}>
+        <TouchableOpacity style={{width:'15%'}}  onPress={()=>navigation.goBack()}>
+            <AntDesign name="arrowleft" size={20} color="white" />
+          </TouchableOpacity>   
+          <TouchableOpacity style={{width:'50%'}}>
+           
+                <Text style={{color:'white',fontWeight:'bold',fontSize:18}}>{users.user}</Text>
+                <Text style={{color:'gray'}}>Truy cập</Text>
+           
+          </TouchableOpacity> 
+          
+          <TouchableOpacity style={{width:'13%'}}>
+            <MaterialCommunityIcons name="phone" size={20} color="white" />
+          </TouchableOpacity>   
+          <TouchableOpacity style={{width:'13%'}}>
+            <Feather name="video" size={20} color="white" />
+          </TouchableOpacity>   
+          <TouchableOpacity style={{width:'13%'}}>
+            <SimpleLineIcons name="list" size={20} color="white" />
+          </TouchableOpacity>   
+         
+                
+    </View>
+    <FlatList
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.messages}
+        onLayout={() => scrollToEnd()}
+    />
+    
+      <View style={styles.inputContainer}>
+      
+     <TouchableOpacity style={{width:'10%'}} onPress={sendMessage}>
+        <MaterialCommunityIcons name="sticker-emoji" size={25} color="black" />
+        </TouchableOpacity>
+   
+        <TextInput
+          style={inputTextEnable===false? styles.input: styles.inputenable}
+          value={inputText}
+          onChangeText={handleInputChange}
+          placeholder="Tin nhắn"
+          
+
+        />
+        {inputTextEnable === false &&( <View style={{flexDirection:'row',width:'30%',justifyContent:'space-between'}}>
+       <TouchableOpacity  onPress={sendMessage}>
+        <SimpleLineIcons name="options" size={25} color="black" />
+        </TouchableOpacity>
+       <TouchableOpacity onPress={sendMessage}>
+        <SimpleLineIcons name="microphone" size={25} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity  onPress={sendMessage}>
+        <SimpleLineIcons name="picture" size={25} color="black" />
+        </TouchableOpacity>
+        </View>)}
+        {inputTextEnable === true &&( <View style={{flexDirection:'row',width:'15%',justifyContent:'flex-end'}}>
+        <TouchableOpacity onPress={sendMessage}>
+        <MaterialIcons name="send" size={25} color="black" />
+        </TouchableOpacity>
+        </View>)}       
+      </View>
+    </View>
+  );
+
+  function scrollToEnd() {
+    const flatList = React.createRef();
+    if (flatList) {
+      flatList.current.scrollToEnd();
+    }
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
-    alignItems: 'center',
   },
-  title:{
+  messages: {
+    flexGrow: 1,
+  },
+  messageContainer: {
+    padding: 10,
+    marginBottom: 5,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
+  },
+  header:{
+    backgroundColor:'blue',
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      height:'8%',
+      width:'100%'
+    },
+  messageContainerMe: {
+    alignSelf: 'flex-end',
+  },
+  messageText: {
+    fontSize: 16,
+  },
+  messageTextMe: {
+    textAlign: 'right',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: 'white',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    height:70,
-    width:'100%',
-    backgroundColor:'black',
-    flexDirection:'row'
+    height:'8%',
+    width:'100%'
   },
-  content:{
-    width:'90%',
-    
+  input: {
+    width:'60%',
+    height:'100%',
+    borderWidth: 0,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
-txtContent:{
-    fontSize:15,
-    color:'white'
-},
-btn:{
-    justifyContent:'space-between',
-    flexDirection:'row'
-},
-pre:{
-    justifyContent:'center',
-    alignItems:'center',
-    borderWidth:1,
-    backgroundColor:'gray',
-    width:100,
-    borderRadius:20,
-},
-
+  inputenable: {
+    width:'75%',
+    height:'100%',
+    borderWidth: 0,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  sendButtonText: {
+    color: 'black',
+    fontSize: 16,
+  },
 });
+
+export default ChatScreen;

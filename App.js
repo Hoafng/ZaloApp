@@ -2,67 +2,70 @@ import * as React from 'react';
 import {} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from './src/Component/HomePage';
-import List from './src/Component/List';
 import Navbar from './src/Component/Navbar';
 import Signin from './src/Component/Signin'
 import ForgotPassword from './src/Component/ForgotPassword';
 import Register from './src/Component/Register';
 import ResendEmail from './src/Component/ResendEmail';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import History from './src/Component/History';
-import Notififation from './src/Component/Notification'
-import { FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import Story from './src/Component/Story';
-import Chapter from './src/Component/Chapter'
-import Profile from './src/Component/Profile'
+import MenuChat from './src/Component/MenuChat';
+import { FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import Body from './src/Component/Body'
 import Login from './src/Component/Login'
 import HomeChat from './src/Component/HomeChat';
-import Chat from './src/Component/Chat';
+import DanhBa from './src/Component/DanhBa';
+import NhatKy from './src/Component/NhatKy';
+import KhamPha from './src/Component/KhamPha';
+import  User from './src/Component/User';
+import ChatScreen from './src/Component/Chat';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const BottomTab = () => {
   return(
       <Tab.Navigator 
-        initialRouteName="History"             
+        initialRouteName="MenuChat"             
       >
-        <Tab.Screen name="History" component={History}   options={{
+        <Tab.Screen name="MenuChat" component={MenuChat}   options={{
           headerShown: false,
           tabBarLabel: '',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="newspaper-variant-multiple" color={color} size={26} />
+            <Ionicons name="chatbubble-ellipses" color={color} size={26} />
           ),
-          tabBarStyle: { backgroundColor: 'black' },
+          tabBarStyle: { backgroundColor: 'white' },
         }}/>
-        <Tab.Screen name="HomeChat" component={HomeChat}  options={{
+        <Tab.Screen name="DanhBa" component={DanhBa}  options={{
           headerShown: false,
           tabBarLabel: '',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="explore" color={color} size={26} />
+            <FontAwesome name="address-book-o" color={color} size={26} />
           ),
-          tabBarStyle: { backgroundColor: 'black' },
+          tabBarStyle: { backgroundColor: 'white' },
         }}/>
-        <Tab.Screen name="Notififation" component={Notififation}   options={{
+        <Tab.Screen name="KhamPha" component={KhamPha}   options={{
           headerShown: false,
           tabBarLabel: '',
           tabBarIcon: ({ color }) => (
-            <Ionicons name="notifications-outline" color={color} size={26} />
+            <SimpleLineIcons name="grid" color={color} size={26} />
           ),
-          tabBarStyle: { backgroundColor: 'black' },
+          tabBarStyle: { backgroundColor: 'white' },
         }}/>
-        <Tab.Screen name='Profile' component={Profile}    options={{
-        title:'Hồ sơ', 
-        headerStyle: {
-            backgroundColor: 'black', 
-          },
+        <Tab.Screen name="NhatKy" component={NhatKy}   options={{
+          headerShown: false,
+          tabBarLabel: '',
+          tabBarIcon: ({ color }) => (
+            <SimpleLineIcons name="clock" color={color} size={26} />
+          ),
+          tabBarStyle: { backgroundColor: 'white' },
+        }}/>
+        <Tab.Screen name='User' component={User}    options={{
+          headerShown: false,
         headerTintColor: 'white', 
           tabBarLabel: '',
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="user-circle" color={color} size={26} />
           ),
-          tabBarStyle: { backgroundColor: 'black' },
+          tabBarStyle: { backgroundColor: 'white' },
         }}/>
       </Tab.Navigator>
   );
@@ -70,23 +73,17 @@ const BottomTab = () => {
 function App() {
   return (
     <NavigationContainer>    
-      <Stack.Navigator initialRouteName="BottomTab" >
+      <Stack.Navigator initialRouteName="HomeLogin" >
       <Stack.Screen name="Navbar" component={Navbar} />
       <Stack.Screen name="BottomTab" component={BottomTab} options={{ headerShown: false }} />
-      <Stack.Screen name="List" component={List} options={{ headerShown: false }} />
       <Stack.Screen name="Body" component={Body} options={{ headerShown: false }} />
-      <Stack.Screen name="Story" component={Story} options={{ headerShown: false }} />
-      <Stack.Screen name="Chapter" component={Chapter} options={{ headerShown: false }}/>
       <Stack.Screen name="Signin" component={Signin}  options={{ headerShown: false}}/>
       <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title:''  }} />
-      <Stack.Screen name="ResendEmail" component={ResendEmail} options={{ title:''  }}/>
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false}} />
+      <Stack.Screen name="ResendEmail" component={ResendEmail} options={{ headerShown: false}}/>
       <Stack.Screen name="Login" component={Login} options={{ title:'Đăng nhập'  }}/>
-      <Stack.Screen name="HomeLogin" component={Home} options={{ title:''  }}/>
-      <Stack.Screen name="Chat" component={Chat} options={{ title:''  }}/>
-      
-      
+      <Stack.Screen name="HomeLogin" component={HomeChat} options={{ headerShown: false}}/>
+      <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false}}/>
     </Stack.Navigator>
     </NavigationContainer>
   );
