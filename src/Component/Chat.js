@@ -5,13 +5,13 @@ import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'r
 const ChatScreen = ({ navigation, route }) => {
   const { users } = route.params; // Retrieve the user ID from the navigation parameters
 
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([users]);
   const [inputText, setInputText] = useState('');
   const [inputTextEnable, setButtonEnabled] = useState(false)
   const sendMessage = () => {
     const newMessage = {
       id: new Date().getTime(),
-      text: inputText,
+      messages: inputText,
       createdAt: new Date(),
       user: 'me',
     };
@@ -24,8 +24,8 @@ const ChatScreen = ({ navigation, route }) => {
     setButtonEnabled(text.trim() !== '')
   }
   const renderItem = ({ item }) => (
-    <View style={[styles.messageContainer, item.user === 'me' && styles.messageContainerMe]}>
-      <Text style={[styles.messageText, item.user === 'me' && styles.messageTextMe]}>{item.text}</Text>
+    <View style={[styles.messageContainer, item.user === 'me' && styles.messageContainerMe, item.user === 'you' && styles.messageContainerYou]}>
+      <Text style={[styles.messageText,styles.messageTextMe]}>{item.messages}</Text>
     </View>
   );
 
@@ -110,12 +110,14 @@ const styles = StyleSheet.create({
   },
   messages: {
     flexGrow: 1,
+
   },
   messageContainer: {
     padding: 10,
     marginBottom: 5,
     backgroundColor: '#e0e0e0',
     borderRadius: 5,
+    maxWidth:'80%',
   },
   header:{
     backgroundColor:'blue',
@@ -130,12 +132,14 @@ const styles = StyleSheet.create({
   messageContainerMe: {
     alignSelf: 'flex-end',
   },
+  messageContainerYou: {
+    alignSelf: 'flex-start',
+  },
   messageText: {
     fontSize: 16,
+    textAlign: 'center',
   },
-  messageTextMe: {
-    textAlign: 'right',
-  },
+ 
   inputContainer: {
     flexDirection: 'row',
     paddingHorizontal: 10,
